@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kar/screens/account_screen.dart';
 import 'package:kar/screens/home_screen.dart';
 
 void main() async{
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: HomeScreen(),
+      home: AccountScreen(),
     );
   }
 }
