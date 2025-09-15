@@ -5,6 +5,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import '../models/utilisateur.dart';
+
 class DatabaseHelper {
   DatabaseHelper._();
   static final DatabaseHelper instance = DatabaseHelper._();
@@ -133,4 +135,15 @@ class DatabaseHelper {
       },
     );
   }
+
+  Future<int> ajouterUtilisateur(Utilisateur user) async{
+    final Database db = await database;
+    
+    return await db.insert(
+        'utilisateur',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace
+    );
+  }
+
 }
