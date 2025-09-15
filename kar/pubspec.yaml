@@ -41,6 +41,7 @@ dependencies:
   path_provider: ^2.1.5
   sqflite_common_ffi: ^2.3.6
   sqlite_viewer: ^1.0.5
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

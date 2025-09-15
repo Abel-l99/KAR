@@ -3,9 +3,7 @@ import 'package:kar/screens/account_screen.dart';
 import 'package:kar/screens/home_screen.dart';
 import 'package:kar/services/auth_service.dart';
 
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await testAuth();
+void main(){
   runApp(const MyApp());
 }
 
@@ -16,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -40,7 +39,7 @@ Future <void> testAuth() async {
   print("✅ Compte créé !");
 
   // Essayer de se connecter
-  final user = await AuthService.loginUser(
+  final user = await AuthService.login(
     username: "john",
     password: "123456",
   );

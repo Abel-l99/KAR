@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 import 'package:kar/data/database_helper.dart';
 import 'package:kar/models/utilisateur.dart';
+import 'package:kar/screens/account_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AuthService {
@@ -42,7 +45,7 @@ class AuthService {
 
 
 
-  static Future<Utilisateur?> loginUser({
+  static Future<Utilisateur?> login({
     required String username,
     required String password,
   })async{
@@ -58,10 +61,26 @@ class AuthService {
     );
 
     if (result.isNotEmpty){
-      return Utilisateur.fromMap(result.first);
+      final utilisateur = Utilisateur.fromMap(result.first);
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', utilisateur.username);
+      await prefs.setString('nom', utilisateur.nom);
+      await prefs.setString('prenoms', utilisateur.prenoms);
+
+      return utilisateur;
     }else{
       return null;
     }
+  }
+
+
+
+
+  static Future<void> logout() async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
   }
 
 }

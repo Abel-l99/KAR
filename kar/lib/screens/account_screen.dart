@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kar/screens/home_screen.dart';
+import 'package:kar/services/auth_service.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -192,9 +194,22 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
 
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // Traiter la soumission du formulaire
+                        final user = await AuthService.login(
+                            username: _usernameController.text,
+                            password: _passwordController.text
+                        );
+
+                        if (user != null){
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()
+                              )
+                          );
+                        }
+
                       }
                     },
                     child: Text(_forLogin ? "Se connecter" : "S'inscrire"),
