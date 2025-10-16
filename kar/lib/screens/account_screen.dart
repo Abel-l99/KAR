@@ -202,12 +202,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         );
 
                         if (user != null){
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()
-                              )
-                          );
+
                         }
 
                       }

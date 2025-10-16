@@ -5,7 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final VoidCallback toggleTheme; // Ajouté pour le changement de thème
+  final bool isDarkMode; // Pour savoir quel thème est actif
+
+  const HomeScreen({required this.toggleTheme, required this.isDarkMode, super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,9 +47,32 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              DrawerHeader(child: Text("Menu")),
-              ListTile(title: Text("Accueil")),
-              ListTile(title: Text("Vos informations")),
+              DrawerHeader(
+                child: Column(
+                  children: [
+                    Text("$nom $prenoms"),
+                    CircleAvatar(
+                      radius: screenWidth * 0.12,
+                    )
+                  ],
+                ),
+              ),
+              ListTile(
+                title: Text("Profil"),
+                onTap: () {},
+              ),
+              ListTile(
+                title: Text("Année courante"),
+                onTap: () {},
+              ),
+              ListTile(
+                title: Text(widget.isDarkMode ? "Thème clair" : "Thème sombre"),
+                onTap: widget.toggleTheme, // Changer le thème au clic
+              ),
+              ListTile(
+                title: Text("Déconnexion"),
+                onTap: () {},
+              ),
             ],
           ),
         ),
@@ -72,14 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Container(
-                    width: screenWidth * 0.45,
-                    height: MediaQuery.of(context).size.height * 0.2,
+                    width: screenWidth * 0.48,
+                    height: screenHeight * 0.20,
                     child: Card(
                       margin: const EdgeInsets.all(10.0),
                       elevation: 10,
                       child: ListTile(
-                        title: Text('Matières à réviser'),
-                        subtitle: Text("Ajoutez et gérez vos matières."),
+                        title: Text('Programme de révision'),
+                        subtitle: Text("Ajoutez et gérez votre emploi du temps personnel."),
                         onTap: () {
                           print("Carte 1 cliquée !");
                         },
@@ -87,8 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Container(
-                    width: screenWidth * 0.45,
-                    height: MediaQuery.of(context).size.height * 0.2,
+                    width: screenWidth * 0.48,
+                    height: screenHeight * 0.20,
                     child: Card(
                       margin: const EdgeInsets.all(10.0),
                       elevation: 10,
@@ -110,14 +136,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    height: MediaQuery.of(context).size.height * 0.2,
+                    width: screenWidth * 0.48,
+                    height: screenHeight * 0.20,
                     child: Card(
                       margin: const EdgeInsets.all(10.0),
                       elevation: 10,
                       child: ListTile(
                         title: Text('Notes'),
-                        subtitle: Text("Enregistrez vos notes et performances."),
+                        subtitle: Text("Enregistrez vos notes et suivre vos performances."),
                         onTap: () {
                           print("Carte 3 cliquée !");
                         },
@@ -125,8 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    height: MediaQuery.of(context).size.height * 0.2,
+                    width: screenWidth * 0.48,
+                    height: screenHeight * 0.20,
                     child: Card(
                       margin: const EdgeInsets.all(10.0),
                       elevation: 10,
