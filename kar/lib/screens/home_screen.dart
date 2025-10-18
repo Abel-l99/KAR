@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 title: Text(widget.isDarkMode ? "Thème clair" : "Thème sombre"),
-                onTap: widget.toggleTheme, // Changer le thème au clic
+                onTap: widget.toggleTheme,
               ),
               ListTile(
                 title: Text("Déconnexion"),

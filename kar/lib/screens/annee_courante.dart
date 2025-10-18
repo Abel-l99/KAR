@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kar/screens/save_matiere.dart';
 
 class AnneeCourante extends StatefulWidget {
   const AnneeCourante({super.key});
@@ -162,6 +163,19 @@ class _AnneeCouranteState extends State<AnneeCourante> {
                 ),
               ],
             ),
+
+            SizedBox(height: screenHeight*0.01),
+
+            ElevatedButton(
+                onPressed: (){
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SaveMatiere())
+                  );
+                },
+                child: Text("Valider")
+            )
 
           ],
         ),
