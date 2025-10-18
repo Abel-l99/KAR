@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kar/screens/account_screen.dart';
+import 'package:kar/screens/annee_courante.dart';
 import 'package:kar/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -9,6 +10,8 @@ class HomeScreen extends StatefulWidget {
   final bool isDarkMode; // Pour savoir quel thème est actif
 
   const HomeScreen({required this.toggleTheme, required this.isDarkMode, super.key});
+
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -32,6 +35,35 @@ class _HomeScreenState extends State<HomeScreen> {
       nom = prefs.getString('nom');
       prenoms = prefs.getString('prenoms');
     });
+  }
+
+  void infosUtilisateur(BuildContext context){
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: Text("Vos informations"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text("Nom : $nom"),
+                  Text("Prénoms : $prenoms"),
+                  Text("Date de naissance : dateNaissance"),
+                  Text("Sexe : sexe"),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Fermer")
+              )
+            ],
+          );
+        }
+    );
   }
 
   @override
@@ -59,11 +91,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 title: Text("Profil"),
-                onTap: () {},
+                onTap: () {
+                  infosUtilisateur(context);
+                },
               ),
               ListTile(
                 title: Text("Année courante"),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AnneeCourante())
+                  );
+                },
               ),
               ListTile(
                 title: Text(widget.isDarkMode ? "Thème clair" : "Thème sombre"),
