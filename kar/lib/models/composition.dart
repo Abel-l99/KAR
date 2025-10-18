@@ -1,7 +1,7 @@
 class Composition {
   final int? id;
   final String type;
-  final int date;
+  final DateTime date;
 
   Composition({
     this.id,
@@ -13,7 +13,7 @@ class Composition {
     return {
       'id': id,
       'type': type,
-      'date': date,
+      'date': date.toIso8601String(),
     };
   }
 
@@ -21,9 +21,9 @@ class Composition {
     return Composition(
       id: map['id'],
       type: map['type'],
-      date: map['date'],
+      date: DateTime.parse(map['date']),
     );
   }
 
-  DateTime get dateTime => DateTime.fromMillisecondsSinceEpoch(date);
+  DateTime get dateTime => DateTime.fromMillisecondsSinceEpoch(date as int);
 }

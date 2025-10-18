@@ -4,7 +4,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:kar/data/database_helper.dart';
 import 'package:kar/models/utilisateur.dart';
-import 'package:kar/screens/account_screen.dart';
+import 'package:kar/screens/create_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -15,27 +15,24 @@ class AuthService {
     return digest.toString();
   }
 
+  // Création de compte
   static Future<int> registerUser({
-    required String username,
     required String password,
     String? nom,
     String? prenoms,
     String? sexe,
-    int? age,
-    String? ecole
+    DateTime? dateNaissance,
   })async{
     final dbHelper = DatabaseHelper.instance;
 
     final hashedPassword = hashPassword(password);
 
     final user = Utilisateur(
-        username: username,
         password: hashedPassword,
         nom: nom ?? '',
         prenoms: prenoms ?? '',
         sexe: sexe ?? '',
-        age: age ?? 0,
-        ecole: ecole ?? '',
+        dateNaissance: dateNaissance ?? DateTime.now(),
     );
 
     return await dbHelper.ajouterUtilisateur(user);
@@ -44,9 +41,8 @@ class AuthService {
 
 
 
-
+  // Connexion
   static Future<Utilisateur?> login({
-    required String username,
     required String password,
   })async{
     final dbHelper = DatabaseHelper.instance;
@@ -56,17 +52,19 @@ class AuthService {
 
     final result = await db.query(
         'utilisateur',
-      where: 'username = ? AND password = ?',
-      whereArgs: [username, hashedPassword]
+      where: 'password = ?',
+      whereArgs: [hashedPassword]
     );
 
     if (result.isNotEmpty){
       final utilisateur = Utilisateur.fromMap(result.first);
+      String dateNaissanceString = utilisateur.dateNaissance.toIso8601String();
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('username', utilisateur.username);
       await prefs.setString('nom', utilisateur.nom);
       await prefs.setString('prenoms', utilisateur.prenoms);
+      await prefs.setString('sexe', utilisateur.sexe);
+      await prefs.setString('dateNaissance', dateNaissanceString);
 
       return utilisateur;
     }else{
@@ -75,8 +73,7 @@ class AuthService {
   }
 
 
-
-
+  //Déconnexion
   static Future<void> logout() async{
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kar/screens/account_screen.dart';
+import 'package:kar/screens/create_account.dart';
 import 'package:kar/screens/annee_courante.dart';
 import 'package:kar/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-            // Ajoutez les cartes ici
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -215,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const AccountScreen(),
+                builder: (context) => const CreateAccount(),
               ),
             );
           },

@@ -25,110 +25,77 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE annee (
+          CREATE TABLE anneeCourante (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              debut DATE NOT NULL,
-              fin DATE NOT NULL
+              anneeDebut DATE NOT NULL,
+              anneeFin DATE NOT NULL,
+              ecole VARCHAR(100) NOT NULL,
+              classe VARCHAR(30) NOT NULL,
+              filiere VARCHAR(50) NOT NULL,
+              nbreDevoirs INTEGER NOT NULL,
+              valDevoirs INTEGER NOT NULL,
+              valExam INTEGER NOT NULL
           );
         ''');
 
         await db.execute('''
           CREATE TABLE utilisateur (
-            username VARCHAR(50) PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             nom VARCHAR(100),
             prenoms VARCHAR(100),
             password TEXT NOT NULL,
-            sexe VARCHAR(10),
-            age INTEGER,
-            ecole VARCHAR(100),
-            anneeId INTEGER,
-            FOREIGN KEY (anneeId) REFERENCES annee(id) ON DELETE CASCADE
+            dateNaissance DATE,
+            sexe VARCHAR(10)
           );
         ''');
 
 
         await db.execute('''
-          CREATE TABLE unitensg (
+          CREATE TABLE semestre (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            libelle VARCHAR(100) NOT NULL,
-            nbreMatiere INTEGER NOT NULL,
-            semestre INTEGER NOT NULL,
-            credit INTEGER NOT NULL,
-            anneeId INTEGER NOT NULL,
-            FOREIGN KEY (anneeId) REFERENCES annee(id) ON DELETE CASCADE
+            libSemestre INTEGER NOT NULL
           );
         ''');
 
         await db.execute('''
           CREATE TABLE matiere (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            libelle VARCHAR(100) NOT NULL,
+            libMatiere VARCHAR(100) NOT NULL,
             coef INTEGER NOT NULL,
-            unitensgId INTEGER NOT NULL,
-            FOREIGN KEY (unitensgId) REFERENCES unitensg(id) ON DELETE CASCADE
+            anneeId INTEGER NOT NULL,
+            semestreId INTEGER NOT NULL,
+            FOREIGN KEY (anneeId) REFERENCES anneeCourante(id) ON DELETE CASCADE,
+            FOREIGN KEY (semestreId) REFERENCES semestre(id) ON DELETE CASCADE
           );
         ''');
 
         await db.execute('''
           CREATE TABLE composition (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            type TEXT NOT NULL,
-            date DATE NOT NULL,
+            type VARCHAR(10) NOT NULL,
+            dateCompo DATE NOT NULL,
             matiereId INTEGER NOT NULL,
             FOREIGN KEY (matiereId) REFERENCES matiere(id) ON DELETE CASCADE
           );  
         ''');
 
         await db.execute('''
-          CREATE TABLE composition_matiere (
-            compositionId INTEGER NOT NULL,
-            matiereId INTEGER NOT NULL,
-            note INTEGER,
-            PRIMARY KEY (compositionId, matiereId),
-            FOREIGN KEY (compositionId) REFERENCES composition(id) ON DELETE CASCADE,
-            FOREIGN KEY (matiereId) REFERENCES matiere(id) ON DELETE CASCADE
-          );
-        ''');
-
-        await db.execute('''
-          CREATE TABLE statutMatiere (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            libelle TEXT CHECK(libelle IN ('Validé','En attente','Non validé')) NOT NULL
-          );
-        ''');
-
-        await db.execute('''
-          CREATE TABLE statutProgr (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            libelle TEXT CHECK(libelle IN ('A venir','Terminé','Pas terminé')) NOT NULL
-          );
-        ''');
-
-        await db.execute('''
-          CREATE TABLE statutMatProgr (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            libelle TEXT CHECK(libelle IN ('Prévu','Réalisé','Non réalisé')) NOT NULL
-          );
-        ''');
-
-        await db.execute('''
           CREATE TABLE programme (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             jour DATE NOT NULL,
-            statutId INTEGER NOT NULL,
-            FOREIGN KEY (statutId) REFERENCES statutProgr(id) ON DELETE CASCADE
+            statut TEXT CHECK(statut IN ('respecté', 'non respecté'))
           );
         ''');
 
         await db.execute('''
-          CREATE TABLE programme_matiere (
-            programmeId INTEGER NOT NULL,
+          CREATE TABLE matiere_programme (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             matiereId INTEGER NOT NULL,
-            statutId INTEGER NOT NULL,
-            PRIMARY KEY (programmeId, matiereId),
-            FOREIGN KEY (programmeId) REFERENCES programme(id) ON DELETE CASCADE,
+            programmeId INTEGER NOT NULL,
+            statut TEXT CHECK(statut IN ('validé', 'non validé')),
             FOREIGN KEY (matiereId) REFERENCES matiere(id) ON DELETE CASCADE,
-            FOREIGN KEY (statutId) REFERENCES statutMatProgr(id) ON DELETE CASCADE
+            FOREIGN KEY (programmeId) REFERENCES programme(id) ON DELETE CASCADE,
+            UNIQUE (matiereId, programmeId)
           );
         ''');
 

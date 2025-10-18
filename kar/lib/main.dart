@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:kar/screens/account_screen.dart';
+import 'package:kar/screens/create_account.dart';
 import 'package:kar/screens/home_screen.dart';
 import 'package:kar/services/auth_service.dart';
+import 'package:sqflite/sqflite.dart';
+
+import 'data/database_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +35,8 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      home: HomeScreen(toggleTheme: toggleTheme, isDarkMode: isDarkMode),
+      //home: HomeScreen(toggleTheme: toggleTheme, isDarkMode: isDarkMode),
+      home: CreateAccount(),
     );
   }
 }
