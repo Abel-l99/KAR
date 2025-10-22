@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kar/screens/authentification.dart';
 import 'package:kar/screens/create_account.dart';
 import 'package:kar/screens/annee_courante.dart';
 import 'package:kar/services/auth_service.dart';
@@ -6,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HomeScreen extends StatefulWidget {
-  final VoidCallback toggleTheme; // Ajouté pour le changement de thème
-  final bool isDarkMode; // Pour savoir quel thème est actif
+  final VoidCallback toggleTheme; 
+  final bool isDarkMode;
 
   const HomeScreen({required this.toggleTheme, required this.isDarkMode, super.key});
 
@@ -20,6 +21,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? nom;
   String? prenoms;
+  String? sexe;
+  String? dateNaissance;
+
   DateTime focusedDay = DateTime.now();
   DateTime selectedDay = DateTime.now();
 
@@ -34,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       nom = prefs.getString('nom');
       prenoms = prefs.getString('prenoms');
+      sexe = prefs.getString('sexe');
+      dateNaissance = prefs.getString('dateNaissance');
     });
   }
 
@@ -48,8 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text("Nom : $nom"),
                   Text("Prénoms : $prenoms"),
-                  Text("Date de naissance : dateNaissance"),
-                  Text("Sexe : sexe"),
+                  Text("Date de naissance : $dateNaissance"),
+                  Text("Sexe : $sexe"),
                 ],
               ),
             ),
@@ -85,6 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text("$nom $prenoms"),
                     CircleAvatar(
                       radius: screenWidth * 0.12,
+                      child: Text(
+                          "${nom != null && nom!.isNotEmpty ? nom![0].toUpperCase() : ''}${prenoms != null && prenoms!.isNotEmpty ? prenoms![0].toUpperCase() : ''}",
+                        style: TextStyle(
+                          fontSize: screenWidth*0.08,
+                        ),
+                      ),
+                      backgroundColor: Colors.cyanAccent,
                     )
                   ],
                 ),
@@ -209,17 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            // AuthService.logout();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CreateAccount(),
-              ),
-            );
-          },
-        ),
+
       ),
     );
   }

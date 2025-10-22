@@ -15,30 +15,6 @@ class AuthService {
     return digest.toString();
   }
 
-  // Création de compte
-  static Future<int> registerUser({
-    required String password,
-    String? nom,
-    String? prenoms,
-    String? sexe,
-    DateTime? dateNaissance,
-  })async{
-    final dbHelper = DatabaseHelper.instance;
-
-    final hashedPassword = hashPassword(password);
-
-    final user = Utilisateur(
-        password: hashedPassword,
-        nom: nom ?? '',
-        prenoms: prenoms ?? '',
-        sexe: sexe ?? '',
-        dateNaissance: dateNaissance ?? DateTime.now(),
-    );
-
-    return await dbHelper.ajouterUtilisateur(user);
-
-  }
-
 
 
   // Connexion

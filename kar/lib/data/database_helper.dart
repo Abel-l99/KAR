@@ -27,8 +27,8 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE anneeCourante (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              anneeDebut DATE NOT NULL,
-              anneeFin DATE NOT NULL,
+              anneeDebut TEXT NOT NULL,
+              anneeFin TEXT NOT NULL,
               ecole VARCHAR(100) NOT NULL,
               classe VARCHAR(30) NOT NULL,
               filiere VARCHAR(50) NOT NULL,
@@ -44,7 +44,7 @@ class DatabaseHelper {
             nom VARCHAR(100),
             prenoms VARCHAR(100),
             password TEXT NOT NULL,
-            dateNaissance DATE,
+            dateNaissance TEXT,
             sexe VARCHAR(10)
           );
         ''');
@@ -73,7 +73,7 @@ class DatabaseHelper {
           CREATE TABLE composition (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             type VARCHAR(10) NOT NULL,
-            dateCompo DATE NOT NULL,
+            dateCompo TEXT NOT NULL,
             matiereId INTEGER NOT NULL,
             FOREIGN KEY (matiereId) REFERENCES matiere(id) ON DELETE CASCADE
           );  
@@ -82,7 +82,7 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE programme (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            jour DATE NOT NULL,
+            jour TEXT NOT NULL,
             statut TEXT CHECK(statut IN ('respecté', 'non respecté'))
           );
         ''');
@@ -111,6 +111,13 @@ class DatabaseHelper {
       user.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace
     );
+  }
+
+  Future<List<Utilisateur>> getAllUtilisateurs() async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query('utilisateur');
+
+    return result.map((e) => Utilisateur.fromMap(e)).toList();
   }
 
 }

@@ -19,7 +19,7 @@ class Utilisateur {
       'nom':nom,
       'prenoms':prenoms,
       'sexe':sexe,
-      'dateNaissance' :dateNaissance
+      'dateNaissance' :dateNaissance.toIso8601String()
     };
   }
 
@@ -29,7 +29,7 @@ class Utilisateur {
         nom: map['nom'],
         prenoms: map['prenoms'],
         sexe: map['sexe'],
-        dateNaissance: map['dateNaissance'],
+        dateNaissance: DateTime.parse(map['dateNaissance']),
     );
   }
 

@@ -13,6 +13,25 @@ class _AnneeCouranteState extends State<AnneeCourante> {
   int? anneeSelect;
   int anneeCourante = DateTime.now().year;
 
+  final TextEditingController anneeDebutController = TextEditingController();
+  final TextEditingController anneeFinController = TextEditingController();
+  final TextEditingController ecoleController = TextEditingController();
+  final TextEditingController classeController = TextEditingController();
+  final TextEditingController valDevoirController = TextEditingController();
+  final TextEditingController valExamController = TextEditingController();
+  final TextEditingController semestre1Controller = TextEditingController();
+  final TextEditingController semestre2Controller = TextEditingController();
+
+  int? anneeDebut;
+  int? anneeFin;
+  String? ecole;
+  String? classe;
+  String? valDevoirs;
+  String? valExam;
+  int? semestre1;
+  int? semestre2;
+
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -48,7 +67,12 @@ class _AnneeCouranteState extends State<AnneeCourante> {
                           child: Text(annee.toString())
                       );
                     }),
-                    onChanged: (int? value) {  },
+                    onChanged: (int? value) {
+                      setState(() {
+                        anneeSelect = value;
+                        anneeDebutController.text = anneeSelect?.toString() ?? '';
+                      });
+                    },
                   ),
                 ),
 
@@ -68,7 +92,10 @@ class _AnneeCouranteState extends State<AnneeCourante> {
                           child: Text(annee.toString())
                       );
                     }),
-                    onChanged: (int? value) {  },
+                    onChanged: (int? value) {
+                      anneeSelect = value;
+                      anneeFinController.text = anneeSelect?.toString() ?? '';
+                    },
                   ),
                 ),
               ],
@@ -79,6 +106,7 @@ class _AnneeCouranteState extends State<AnneeCourante> {
               style: TextStyle(fontSize: 16),
             ),
             TextField(
+              controller: ecoleController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Entrez votre nom",
@@ -90,6 +118,7 @@ class _AnneeCouranteState extends State<AnneeCourante> {
               style: TextStyle(fontSize: 16),
             ),
             TextField(
+              controller: classeController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Entrez votre nom",
@@ -104,8 +133,9 @@ class _AnneeCouranteState extends State<AnneeCourante> {
               children: [
                 Flexible(
                   child: TextField(
+                    controller: valDevoirController,
                     inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                     ],
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -118,8 +148,9 @@ class _AnneeCouranteState extends State<AnneeCourante> {
 
                 Flexible(
                   child: TextField(
+                    controller: valExamController,
                     inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                     ],
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -138,6 +169,7 @@ class _AnneeCouranteState extends State<AnneeCourante> {
               children: [
                 Flexible(
                   child: TextField(
+                    controller: semestre1Controller,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                     ],
@@ -152,6 +184,7 @@ class _AnneeCouranteState extends State<AnneeCourante> {
 
                 Flexible(
                   child: TextField(
+                    controller: semestre2Controller,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                     ],
@@ -169,9 +202,20 @@ class _AnneeCouranteState extends State<AnneeCourante> {
             ElevatedButton(
                 onPressed: (){
 
+
+
                   Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SaveMatiere())
+                      MaterialPageRoute(builder: (context) => SaveMatiere(
+                        anneeDebut: anneeDebutController,
+                        anneeFin: anneeFinController,
+                        ecole: ecoleController,
+                        classe: classeController,
+                        valDevoirs: valDevoirController,
+                        valExam: valExamController,
+                        semestre1: semestre1Controller,
+                        semestre2: semestre2Controller
+                      ))
                   );
                 },
                 child: Text("Valider")
