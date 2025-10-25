@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kar/screens/authentification.dart';
+import 'package:kar/screens/compo.dart';
 import 'package:kar/screens/create_account.dart';
 import 'package:kar/screens/annee_courante.dart';
 import 'package:kar/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '../data/database_helper.dart';
+import '../models/matiere.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme; 
@@ -19,6 +23,120 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  void plannifier(BuildContext context, DateTime jour, Matiere matiere) async{
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: Text("Type de composition"),
+
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  OutlinedButton(
+                      onPressed: (){
+                        DatabaseHelper.instance.planifierDevoir(
+                          matiere,
+                          "devoir",
+                          jour
+                        ).then((_) {
+                          Navigator.of(context).pop(); // Ferme la boîte
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("✅ Devoir planifié pour ${matiere.libMatiere}"),
+                            ),
+                          );
+                        });
+                      },
+                      child: Text("Devoir")
+                  ),
+
+                  OutlinedButton(
+                      onPressed: (){
+
+                      },
+                      child: Text("Devoir")
+                  )
+                ],
+              ),
+            ),
+          );
+
+        }
+    );
+  }
+
+  void lesMatieres(BuildContext context, DateTime date) async {
+    try {
+      final matieres = await DatabaseHelper.instance.recupererMatieres();
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.school, color: Colors.blue),
+                SizedBox(width: 8),
+                Text("Toutes mes matières"),
+              ],
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 300,
+              child: matieres.isEmpty
+                  ? const Center(child: Text("Aucune matière disponible"))
+                  : ListView.builder(
+                itemCount: matieres.length,
+                itemBuilder: (context, index) {
+                  final matiere = matieres[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    child: ListTile(
+                      onTap: (){
+                        plannifier(context, date, matiere);
+                      },
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blue,
+                        child: Text(
+                          matiere.coef.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        matiere.libMatiere,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        'Crédits: ${matiere.credit} • Semestre: ${matiere.semestre}',
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Fermer"),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print("❌ Erreur: $e");
+    }
+  }
+
   String? nom;
   String? prenoms;
   String? sexe;
@@ -54,8 +172,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text("Nom : $nom"),
                   Text("Prénoms : $prenoms"),
-                  Text("Date de naissance : $dateNaissance"),
-                  Text("Sexe : $sexe"),
                 ],
               ),
             ),
@@ -121,10 +237,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text(widget.isDarkMode ? "Thème clair" : "Thème sombre"),
                 onTap: widget.toggleTheme,
               ),
-              ListTile(
-                title: Text("Déconnexion"),
-                onTap: () {},
-              ),
             ],
           ),
         ),
@@ -174,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         title: Text('Devoirs et examens'),
                         subtitle: Text("Consultez vos échéances de devoirs et examens pour rester organisé."),
                         onTap: () {
-                          print("Carte 2 cliquée !");
+                          lesMatieres(context, selectedDay);
                         },
                       ),
                     ),
@@ -197,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         title: Text('Notes'),
                         subtitle: Text("Enregistrez vos notes et suivre vos performances."),
                         onTap: () {
-                          print("Carte 3 cliquée !");
+
                         },
                       ),
                     ),

@@ -34,13 +34,10 @@ class AuthService {
 
     if (result.isNotEmpty){
       final utilisateur = Utilisateur.fromMap(result.first);
-      String dateNaissanceString = utilisateur.dateNaissance.toIso8601String();
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('nom', utilisateur.nom);
       await prefs.setString('prenoms', utilisateur.prenoms);
-      await prefs.setString('sexe', utilisateur.sexe);
-      await prefs.setString('dateNaissance', dateNaissanceString);
 
       return utilisateur;
     }else{

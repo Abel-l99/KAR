@@ -17,6 +17,7 @@ class _AnneeCouranteState extends State<AnneeCourante> {
   final TextEditingController anneeFinController = TextEditingController();
   final TextEditingController ecoleController = TextEditingController();
   final TextEditingController classeController = TextEditingController();
+  final TextEditingController filiereController = TextEditingController();
   final TextEditingController valDevoirController = TextEditingController();
   final TextEditingController valExamController = TextEditingController();
   final TextEditingController semestre1Controller = TextEditingController();
@@ -126,6 +127,18 @@ class _AnneeCouranteState extends State<AnneeCourante> {
             ),
 
             Text(
+              "Filière:",
+              style: TextStyle(fontSize: 16),
+            ),
+            TextField(
+              controller: filiereController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Entrez votre nom",
+              ),
+            ),
+
+            Text(
               "Compositions:",
               style: TextStyle(fontSize: 16),
             ),
@@ -201,9 +214,6 @@ class _AnneeCouranteState extends State<AnneeCourante> {
 
             ElevatedButton(
                 onPressed: (){
-
-
-
                   Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => SaveMatiere(
@@ -211,6 +221,7 @@ class _AnneeCouranteState extends State<AnneeCourante> {
                         anneeFin: anneeFinController,
                         ecole: ecoleController,
                         classe: classeController,
+                        filiere: filiereController,
                         valDevoirs: valDevoirController,
                         valExam: valExamController,
                         semestre1: semestre1Controller,

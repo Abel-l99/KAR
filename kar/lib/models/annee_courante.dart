@@ -1,13 +1,13 @@
 class AnneeCourante {
   final int? id;
-  final DateTime anneeDebut;
-  final DateTime anneeFin;
+  final int anneeDebut;
+  final int anneeFin;
   final String ecole;
   final String classe;
   final String filiere;
-  final String nbreDevoirs;
   final String valDevoirs;
   final String valExam;
+  final String statutAnnee;
 
   AnneeCourante({
     this.id,
@@ -16,36 +16,36 @@ class AnneeCourante {
     required this.ecole,
     required this.classe,
     required this.filiere,
-    required this.nbreDevoirs,
     required this.valDevoirs,
     required this.valExam,
+    required this.statutAnnee
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'anneeDebut': anneeDebut.toIso8601String(),
-      'anneeFin': anneeFin.toIso8601String(),
+      'anneeDebut': anneeDebut,
+      'anneeFin': anneeFin,
       'ecole': ecole,
       'classe': classe,
       'filiere': filiere,
-      'nbreDevoirs': nbreDevoirs,
       'valDevoirs': valDevoirs,
       'valExam': valExam,
+      'statutAnnee':statutAnnee,
     };
   }
 
   factory AnneeCourante.fromMap(Map<String, dynamic> map) {
     return AnneeCourante(
       id: map['id'],
-      anneeDebut: DateTime.parse(map['debut']),
-      anneeFin: DateTime.parse(map['fin']),
+      anneeDebut: map['debut'],
+      anneeFin: map['fin'],
       ecole: map['ecole'],
       classe: map['classe'],
       filiere: map['filiere'],
-      nbreDevoirs: map['nbreDevoirs'],
       valDevoirs: map['valDevoirs'],
       valExam: map['valExam'],
+      statutAnnee: map['statutAnnee'],
     );
   }
 }

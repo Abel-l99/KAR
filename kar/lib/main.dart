@@ -11,6 +11,8 @@ import 'data/database_helper.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await DatabaseHelper.instance.database;
+
   await initializeDateFormatting('fr_FR', null);
   runApp(const MyApp());
 }

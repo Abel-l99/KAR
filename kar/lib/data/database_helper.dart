@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:kar/models/composition.dart';
+import 'package:kar/models/matiere.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import '../models/annee_courante.dart';
 import '../models/utilisateur.dart';
 
 class DatabaseHelper {
@@ -32,9 +35,9 @@ class DatabaseHelper {
               ecole VARCHAR(100) NOT NULL,
               classe VARCHAR(30) NOT NULL,
               filiere VARCHAR(50) NOT NULL,
-              nbreDevoirs INTEGER NOT NULL,
               valDevoirs INTEGER NOT NULL,
-              valExam INTEGER NOT NULL
+              valExam INTEGER NOT NULL,
+              statutAnnee TEXT CHECK(statutAnnee IN ('en cours', 'terminée'))
           );
         ''');
 
@@ -43,17 +46,7 @@ class DatabaseHelper {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nom VARCHAR(100),
             prenoms VARCHAR(100),
-            password TEXT NOT NULL,
-            dateNaissance TEXT,
-            sexe VARCHAR(10)
-          );
-        ''');
-
-
-        await db.execute('''
-          CREATE TABLE semestre (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            libSemestre INTEGER NOT NULL
+            password TEXT NOT NULL
           );
         ''');
 
@@ -62,10 +55,10 @@ class DatabaseHelper {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             libMatiere VARCHAR(100) NOT NULL,
             coef INTEGER NOT NULL,
+            credit INTEGER NOT NULL,
             anneeId INTEGER NOT NULL,
-            semestreId INTEGER NOT NULL,
-            FOREIGN KEY (anneeId) REFERENCES anneeCourante(id) ON DELETE CASCADE,
-            FOREIGN KEY (semestreId) REFERENCES semestre(id) ON DELETE CASCADE
+            semestre INTEGER NOT NULL,
+            FOREIGN KEY (anneeId) REFERENCES anneeCourante(id) ON DELETE CASCADE
           );
         ''');
 
@@ -103,6 +96,7 @@ class DatabaseHelper {
     );
   }
 
+  // enregistrer un utilisateur
   Future<int> ajouterUtilisateur(Utilisateur user) async{
     final Database db = await database;
     
@@ -113,11 +107,73 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<Utilisateur>> getAllUtilisateurs() async {
+  // Enregistrer une nouvelle année et matières
+  Future<void> ajouterAnneeEtMatieres(
+      AnneeCourante annee,
+      List<Matiere> matieres,
+      ) async {
     final db = await database;
-    final List<Map<String, dynamic>> result = await db.query('utilisateur');
 
-    return result.map((e) => Utilisateur.fromMap(e)).toList();
+    await db.transaction((txn) async {
+      int anneeId = await txn.insert(
+        'anneeCourante',
+        annee.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      for (Matiere matiere in matieres) {
+        matiere.anneeId = anneeId;
+        await txn.insert(
+          'matiere',
+          matiere.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    });
+  }
+
+  // récupérer toutes les matières de l'année en cours
+  Future<List<Matiere>> recupererMatieres() async {
+    final db = await instance.database;
+
+    final anneeResult = await db.query(
+      'anneeCourante',
+      where: 'statutAnnee = ?',
+      whereArgs: ['en cours'],
+      limit: 1,
+    );
+
+    if (anneeResult.isEmpty) {
+      return [];
+    }
+
+    final anneeId = anneeResult.first['id'] as int;
+
+    final matieresResult = await db.query(
+      'matiere',
+      where: 'anneeId = ?',
+      whereArgs: [anneeId],
+    );
+
+    return matieresResult.map((json) => Matiere.fromMap(json)).toList();
+  }
+
+  // plannifier un devoir
+  Future<void> planifierDevoir(Matiere matiere, String type, DateTime date) async {
+    final Database db = await database;
+
+    final composition = Composition(
+      type: type,
+      date: date,
+      matiereId: matiere.id!,
+    );
+
+    await db.insert(
+      'composition',
+      composition.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
   }
 
 }

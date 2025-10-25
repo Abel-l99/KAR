@@ -24,33 +24,15 @@ class _AccountScreenState extends State<CreateAccount> {
 
   final TextEditingController nomController = TextEditingController();
   final TextEditingController prenomsController = TextEditingController();
-  final TextEditingController dateNaissanceController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
-
-  Future<void> selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        selectedDate = pickedDate;
-        dateNaissanceController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
-      });
-    }
-  }
 
   Future<void> creerCompte() async {
 
     if (nomController.text.isEmpty ||
         prenomsController.text.isEmpty ||
         passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty ||
-        selectedDate == null ||
-        selectedSexe == null) {
+        confirmPasswordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Veuillez remplir tous les champs.")),
       );
@@ -69,8 +51,6 @@ class _AccountScreenState extends State<CreateAccount> {
       nom: nomController.text,
       prenoms: prenomsController.text,
       password: AuthService.hashPassword(passwordController.text),
-      dateNaissance: selectedDate!,
-      sexe: selectedSexe!,
     );
 
     // Appeler la méthode pour ajouter l'utilisateur
@@ -88,13 +68,8 @@ class _AccountScreenState extends State<CreateAccount> {
 
       nomController.clear();
       prenomsController.clear();
-      dateNaissanceController.clear();
       passwordController.clear();
       confirmPasswordController.clear();
-      setState(() {
-        selectedDate = null;
-        selectedSexe = null;
-      });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Erreur lors de l'enregistrement de l'utilisateur.")),
@@ -134,51 +109,6 @@ class _AccountScreenState extends State<CreateAccount> {
                   border: OutlineInputBorder(),
                   hintText: "Prénoms",
                 ),
-              ),
-
-              SizedBox(height: screenHeight*0.01),
-
-              GestureDetector(
-                onTap: () => selectDate(context),
-                child: AbsorbPointer(
-                  child: TextField(
-                    controller: dateNaissanceController,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: selectedDate != null
-                        ?DateFormat('dd-MM-yyyy').format(selectedDate!)
-                          :"Date de naissance"
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: screenHeight*0.01),
-
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-                value: selectedSexe,
-                hint: const Text("Sexe"),
-                items: const [
-                  DropdownMenuItem(
-                    value: 'masculin',
-                    child: Text('Masculin'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'féminin',
-                    child: Text('Féminin'),
-                  ),
-                ],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedSexe = newValue;
-                  });
-                },
-                validator: (value) =>
-                value == null ? "Veuillez sélectionner un sexe" : null,
               ),
 
               SizedBox(height: screenHeight*0.01),
